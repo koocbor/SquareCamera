@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +29,13 @@ public class EditSavePhotoFragment extends Fragment {
     public static final String BITMAP_KEY = "bitmap_byte_array";
     public static final String ROTATION_KEY = "rotation";
     public static final String IMAGE_INFO = "image_info";
+    public static final String MIN_REQ_SIZE = "min:req:size";
 
     private static final int REQUEST_STORAGE = 1;
 
     public static Fragment newInstance(byte[] bitmapByteArray, int rotation,
-                                       @NonNull ImageParameters parameters) {
+                                       @NonNull ImageParameters parameters,
+                                       Integer minRequestSize) {
         Fragment fragment = new EditSavePhotoFragment();
 
         Bundle args = new Bundle();
@@ -40,11 +43,30 @@ public class EditSavePhotoFragment extends Fragment {
         args.putInt(ROTATION_KEY, rotation);
         args.putParcelable(IMAGE_INFO, parameters);
 
+        if (minRequestSize != null) {
+            args.putInt(MIN_REQ_SIZE, minRequestSize);
+        }
+
         fragment.setArguments(args);
         return fragment;
     }
 
     public EditSavePhotoFragment() {}
+
+    byte[] imgData;
+
+    private Integer minRequestSize;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null && getArguments().containsKey(MIN_REQ_SIZE)) {
+            minRequestSize = getArguments().getInt(MIN_REQ_SIZE);
+        } else {
+            minRequestSize = null;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +80,7 @@ public class EditSavePhotoFragment extends Fragment {
 
         int rotation = getArguments().getInt(ROTATION_KEY);
         byte[] data = getArguments().getByteArray(BITMAP_KEY);
+        imgData = data;
         ImageParameters imageParameters = getArguments().getParcelable(IMAGE_INFO);
 
         if (imageParameters == null) {
@@ -87,7 +110,12 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView) {
-        Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+        Bitmap bitmap;
+        if (minRequestSize != null) {
+            bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data, minRequestSize);
+        } else {
+            bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+        }
 //        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
         if (rotation != 0) {
             Bitmap oldBitmap = bitmap;

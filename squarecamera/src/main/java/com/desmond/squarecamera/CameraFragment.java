@@ -52,8 +52,12 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
 
     private CameraOrientationListener mOrientationListener;
 
-    public static Fragment newInstance() {
-        return new CameraFragment();
+    private Integer minRequestSize;
+
+    public static Fragment newInstance(Integer minRequestSize) {
+        CameraFragment f = new CameraFragment();
+        f.minRequestSize = minRequestSize;
+        return f;
     }
 
     public CameraFragment() {}
@@ -377,6 +381,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             if (isDesireRatio && isBetterSize) {
                 bestSize = size;
             }
+
         }
 
         if (bestSize == null) {
@@ -497,7 +502,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 .beginTransaction()
                 .replace(
                         R.id.fragment_container,
-                        EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy()),
+                        EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy(), minRequestSize),
                         EditSavePhotoFragment.TAG)
                 .addToBackStack(null)
                 .commit();

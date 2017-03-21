@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) return;
 
-        if (requestCode == REQUEST_CAMERA) {
+        if (requestCode == CameraActivity.REQUEST_SQUARE_CAMERA) {
             Uri photoUri = data.getData();
             // Get the bitmap in according to the width of the device
             Bitmap bitmap = ImageUtility.decodeSampledBitmapFromPath(photoUri.getPath(), mSize.x, mSize.x);
@@ -88,8 +88,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launch() {
-        Intent startCustomCameraIntent = new Intent(this, CameraActivity.class);
-        startActivityForResult(startCustomCameraIntent, REQUEST_CAMERA);
+        CameraActivity.startSquareCamera(this, 1080);
+//        Intent startCustomCameraIntent = new Intent(this, CameraActivity.class);
+//        startActivityForResult(startCustomCameraIntent, REQUEST_CAMERA);
     }
 
     @Override
