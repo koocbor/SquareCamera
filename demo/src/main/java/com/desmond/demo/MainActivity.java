@@ -89,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void launch() {
         CameraActivity.startSquareCamera(this, 1080);
-//        Intent startCustomCameraIntent = new Intent(this, CameraActivity.class);
-//        startActivityForResult(startCustomCameraIntent, REQUEST_CAMERA);
     }
 
     @Override
